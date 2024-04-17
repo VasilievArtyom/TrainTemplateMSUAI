@@ -1,0 +1,68 @@
+# main paths
+data_path: "MNIST"
+annotation_path: "MNIST"
+exp_path: "Experiments"
+
+# train
+annotations: "train.csv"
+images: "data"
+
+# validation
+val_annotations: "val.csv"
+val_images: "data"
+
+# exp params
+exp_name: baseline
+project: MNIST
+
+trainer:
+  precision: 32
+  sync_batchnorm: True
+  gradient_clip_val: 1.0
+  max_epochs: 10
+  accelerator: auto
+  #  accelerator: gpu
+  devices: auto
+  #  devices: [0]
+
+weights:
+
+model:
+  encoder: tf_efficientnet_b0
+  output: 10
+
+dataloader:
+  batch_size: 8
+  num_workers: 2
+
+preprocess:
+  side_size: 128
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+
+transforms:
+  - name: 'RandomBrightnessContrast'
+    kwargs:
+      brightness_by_max: True
+      p: 0.5
+  - name: 'ImageCompression'
+    kwargs:
+      quality_lower: 99
+      quality_upper: 100
+      compression_type: 0
+      p: 0.1
+
+optimizer: adam
+optimizer_params:
+  lr: 0.001
+  weight_decay: 0.0001
+
+scheduler: cosine
+scheduler_params:
+  warmup_epochs: 0
+
+checkpoint:
+  monitor: MulticlassAccuracy/val
+  filename: model
+  mode: max
+
