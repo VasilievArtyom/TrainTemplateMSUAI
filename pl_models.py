@@ -103,7 +103,7 @@ class TrainPipeline(L.LightningModule):
         self.log("Loss/val", loss, prog_bar=True)
         self.valid_metrics.update(out, y)
 
-    def on_training_epoch_end(self):
+    def on_train_epoch_end(self):
         train_metrics = self.train_metrics.compute()
         self.log_dict(train_metrics)
         self.train_metrics.reset()
